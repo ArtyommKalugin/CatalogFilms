@@ -62,6 +62,43 @@ namespace FilmsCatalog.Controllers
 
             return View(model);
         }
-        
+
+        [HttpGet]
+        public IActionResult SignIn(string returnUrl = null)
+        {
+            return View(new SignInViewModel {ReturnUrl = returnUrl});
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SignIn(SignInViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var signIn = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
+            if (!signIn.Succeeded)
+            {
+                ModelState.AddModelError(string.Empty, "Неверный логин или пароль");
+
+                return View(model);
+            }
+
+            if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
+            {
+                return Redirect(model.ReturnUrl);
+            }
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+
+            return RedirectToAction("Index", "Home");
+        }
     }
 }

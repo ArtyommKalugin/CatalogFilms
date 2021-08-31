@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Catalog_Films\\FilmsCatalog\\FilmsCatalog.csproj": {}
+    "D:\\CatalogFilms\\Catalog_Films\\FilmsCatalog\\FilmsCatalog.csproj": {}
   },
   "projects": {
-    "D:\\Catalog_Films\\FilmsCatalog\\FilmsCatalog.csproj": {
+    "D:\\CatalogFilms\\Catalog_Films\\FilmsCatalog\\FilmsCatalog.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Catalog_Films\\FilmsCatalog\\FilmsCatalog.csproj",
+        "projectUniqueName": "D:\\CatalogFilms\\Catalog_Films\\FilmsCatalog\\FilmsCatalog.csproj",
         "projectName": "FilmsCatalog",
-        "projectPath": "D:\\Catalog_Films\\FilmsCatalog\\FilmsCatalog.csproj",
+        "projectPath": "D:\\CatalogFilms\\Catalog_Films\\FilmsCatalog\\FilmsCatalog.csproj",
         "packagesPath": "C:\\Users\\Тёма\\.nuget\\packages\\",
-        "outputPath": "D:\\Catalog_Films\\FilmsCatalog\\obj\\",
+        "outputPath": "D:\\CatalogFilms\\Catalog_Films\\FilmsCatalog\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Microsoft\\Xamarin\\NuGet\\"
