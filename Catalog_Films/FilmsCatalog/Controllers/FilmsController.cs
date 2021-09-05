@@ -112,5 +112,83 @@ namespace FilmsCatalog.Controllers
             return View(film);
         }
 
+        // GET: Films/Edit/5
+        [Authorize]
+        public async Task<IActionResult> Edit(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var film = await this._context.Films
+                .SingleOrDefaultAsync(m => m.Id == id);
+            if (film == null)
+            {
+                return NotFound();
+            }
+
+            var model = new FilmEditViewModel
+            {
+                Name = film.Name,
+                Description = film.Description,
+                Year = film.Year,
+                Producer = film.Producer
+            };
+
+            return this.View(model);
+        }
+
+        // POST: Films/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(Guid? id, FilmEditViewModel model)
+        {
+            if (id == null)
+            {
+                return this.NotFound();
+            }
+
+            var film = await this._context.Films
+                .SingleOrDefaultAsync(m => m.Id == id);
+            if (film == null)
+            {
+                return this.NotFound();
+            }
+
+            var fileName = Path.GetFileName(ContentDispositionHeaderValue.Parse(model.Poster.ContentDisposition).FileName.Trim('"'));
+            var fileExt = Path.GetExtension(fileName);
+            if (!AllowedExtensions.Contains(fileExt))
+            {
+                ModelState.AddModelError(nameof(model.Poster), "This file type is prohibited");
+            }
+
+            if (this.ModelState.IsValid)
+            {
+                film.Name = model.Name;
+                film.Description = model.Description;
+                film.Year = model.Year;
+                film.Producer = model.Producer;
+
+                if (model.Poster != null)
+                {
+                    var posterPath = Path.Combine(hostingEnvironment.WebRootPath, "attachments", film.Id.ToString("N") + fileExt);
+                    film.Path = $"/attachments/{film.Id:N}{fileExt}";
+                    using (var fileStream = new FileStream(posterPath, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read))
+                    {
+                        await model.Poster.CopyToAsync(fileStream);
+                    }
+                }
+
+                await this._context.SaveChangesAsync();
+                return this.RedirectToAction("Index");
+            }
+
+            return this.View(model);
+        }
+
     }
 }
