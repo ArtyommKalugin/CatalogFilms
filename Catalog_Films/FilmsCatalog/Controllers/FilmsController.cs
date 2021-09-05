@@ -190,5 +190,51 @@ namespace FilmsCatalog.Controllers
             return this.View(model);
         }
 
+        // GET: Films/Delete/5
+        [Authorize]
+        public async Task<IActionResult> Delete(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var film = await _context.Films
+                .Include(f => f.Creator)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (film == null)
+            {
+                return NotFound();
+            }
+
+            return View(film);
+        }
+
+        // POST: Films/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<IActionResult> DeleteConfirmed(Guid? id)
+        {
+            if (id == null)
+            {
+                return this.NotFound();
+            }
+
+            var film = await this._context.Films
+                .SingleOrDefaultAsync(m => m.Id == id);
+
+            if (film == null)
+            {
+                return this.NotFound();
+            }
+
+            var posterPath = Path.Combine(this.hostingEnvironment.WebRootPath, "attachments", film.Id.ToString("N") + Path.GetExtension(film.Path));
+            System.IO.File.Delete(posterPath);
+            _context.Films.Remove(film);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
     }
 }
