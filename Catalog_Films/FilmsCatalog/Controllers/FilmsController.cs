@@ -39,7 +39,7 @@ namespace FilmsCatalog.Controllers
             int pageNumber = (page ?? 1);
 
             var applicationDbContext = _context.Films.Include(f => f.Creator);
-            return View(applicationDbContext);
+            return View(applicationDbContext.ToPagedList(pageNumber, pageSize));
         }
 
         // GET: Films/Create
