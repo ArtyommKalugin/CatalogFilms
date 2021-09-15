@@ -13,5 +13,12 @@ namespace FilmsCatalog.Data
             : base(options)
         {
         }
+
+        public DbSet<Actor> Actors { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+        }
     }
 }
