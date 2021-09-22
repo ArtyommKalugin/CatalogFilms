@@ -1,0 +1,26 @@
+﻿@model X.PagedList.IPagedList<FilmsCatalog.Models.Film>
+@using X.PagedList;
+@using X.PagedList.Mvc.Core;
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<table class="table">
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <b><big><a asp-action="Details" asp-route-id="@item.Id" style="color:#000000">@Html.DisplayFor(modelItem => item.Name) (@Html.DisplayFor(modelItem => item.Year))</a></big></b>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<big>
+    <div class="pagination">
+        Страница
+        @Html.PagedListPager(Model, page => Url.Action("Index", "Films", new { page }))
+    </div>
+</big>
