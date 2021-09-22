@@ -12,6 +12,7 @@ using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Identity;
+using FilmsCatalog.Services;
 
 namespace FilmsCatalog.Controllers
 {
@@ -25,10 +26,13 @@ namespace FilmsCatalog.Controllers
 
         private readonly IHostingEnvironment hostingEnvironment;
 
-        public FilmsController(ApplicationDbContext context, UserManager<User> userManager, IHostingEnvironment hostingEnvironment)
+        private readonly IUserPermissionsService userPermissions;
+
+        public FilmsController(ApplicationDbContext context, UserManager<User> userManager, IUserPermissionsService userPermissions, IHostingEnvironment hostingEnvironment)
         {
             _context = context;
             this.userManager = userManager;
+            this.userPermissions = userPermissions;
             this.hostingEnvironment = hostingEnvironment;
         }
 
@@ -109,6 +113,12 @@ namespace FilmsCatalog.Controllers
                 return NotFound();
             }
 
+            if (userPermissions.CanEditFilm(film))
+            {
+                ViewBag.permission = true;
+            }
+            else ViewBag.permission = false;
+
             return View(film);
         }
 
@@ -123,7 +133,7 @@ namespace FilmsCatalog.Controllers
 
             var film = await this._context.Films
                 .SingleOrDefaultAsync(m => m.Id == id);
-            if (film == null)
+            if (film == null || !this.userPermissions.CanEditFilm(film))
             {
                 return NotFound();
             }
@@ -154,7 +164,7 @@ namespace FilmsCatalog.Controllers
 
             var film = await this._context.Films
                 .SingleOrDefaultAsync(m => m.Id == id);
-            if (film == null)
+            if (film == null || !this.userPermissions.CanEditFilm(film))
             {
                 return this.NotFound();
             }
@@ -202,7 +212,7 @@ namespace FilmsCatalog.Controllers
             var film = await _context.Films
                 .Include(f => f.Creator)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (film == null)
+            if (film == null || !this.userPermissions.CanEditFilm(film))
             {
                 return NotFound();
             }
@@ -224,7 +234,7 @@ namespace FilmsCatalog.Controllers
             var film = await this._context.Films
                 .SingleOrDefaultAsync(m => m.Id == id);
 
-            if (film == null)
+            if (film == null || !this.userPermissions.CanEditFilm(film))
             {
                 return this.NotFound();
             }

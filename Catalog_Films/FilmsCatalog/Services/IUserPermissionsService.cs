@@ -5,6 +5,6 @@ namespace FilmsCatalog.Services
 {
     public interface IUserPermissionsService
     {
-        
+        Boolean CanEditFilm(Film film);
     }
 }

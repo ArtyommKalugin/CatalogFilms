@@ -19,6 +19,16 @@ namespace FilmsCatalog.Services
             this.httpContextAccessor = httpContextAccessor;
         }
 
-        private HttpContext HttpContext => this.httpContextAccessor.HttpContext;   
+        private HttpContext HttpContext => this.httpContextAccessor.HttpContext;
+
+        public Boolean CanEditFilm(Film film)
+        {
+            if (!this.HttpContext.User.Identity.IsAuthenticated)
+            {
+                return false;
+            }
+
+            return this.userManager.GetUserId(this.httpContextAccessor.HttpContext.User) == film.CreatorId;
+        }
     }
 }
