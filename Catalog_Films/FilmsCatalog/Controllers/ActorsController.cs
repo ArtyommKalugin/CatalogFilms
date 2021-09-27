@@ -184,5 +184,51 @@ namespace FilmsCatalog.Controllers
             return this.View(model);
         }
 
+        // GET: Actors/Delete/5
+        [Authorize]
+        public async Task<IActionResult> Delete(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var actor = await _context.Actors
+                .Include(f => f.Creator)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (actor == null)
+            {
+                return NotFound();
+            }
+
+            return View(actor);
+        }
+
+        // POST: Actors/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<IActionResult> DeleteConfirmed(Guid? id)
+        {
+            if (id == null)
+            {
+                return this.NotFound();
+            }
+
+            var actor = await this._context.Actors
+                .SingleOrDefaultAsync(m => m.Id == id);
+
+            if (actor == null)
+            {
+                return this.NotFound();
+            }
+
+            var photoPath = Path.Combine(this.hostingEnvironment.WebRootPath, "attachments", actor.Id.ToString("N") + Path.GetExtension(actor.Path));
+            System.IO.File.Delete(photoPath);
+            _context.Actors.Remove(actor);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
     }
 }
