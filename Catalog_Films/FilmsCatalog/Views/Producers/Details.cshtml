@@ -1,0 +1,38 @@
+﻿@model FilmsCatalog.Models.Producer
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h4>Фильм</h4>
+<hr />
+<table class="table">
+    <tbody>
+        <tr>
+            <td width="200">
+                <a asp-action="Details" asp-route-id="@Model.Id">
+                    <img src="@Model.Path" width="200" height="300" />
+                </a>
+            </td>
+            <td>
+                <big><b><u>@Html.DisplayFor(model => model.Name) (@Html.DisplayFor(model => model.Surname))</u></b></big>
+                <br />
+                @Html.DisplayFor(model => model.Date_of_birth)
+                <br />
+                @Html.DisplayFor(model => model.Place_of_birth)
+                <br />
+                @Html.DisplayFor(model => model.Number_of_films)
+                <br />
+                @Html.DisplayFor(model => model.Genres)
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a>
+    <a asp-action="Delete" asp-route-id="@Model.Id">Удалить</a>
+</div>

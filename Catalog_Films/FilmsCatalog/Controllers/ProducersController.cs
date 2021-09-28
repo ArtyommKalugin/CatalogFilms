@@ -84,5 +84,25 @@ namespace FilmsCatalog.Controllers
             return View(model);
         }
 
+        // GET: Producers/Details/5
+        [Authorize]
+        public async Task<IActionResult> Details(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var producer = await _context.Producers
+                .Include(f => f.Creator)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (producer == null)
+            {
+                return NotFound();
+            }
+
+            return View(producer);
+        }
+
     }
 }
