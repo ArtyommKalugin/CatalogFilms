@@ -104,5 +104,87 @@ namespace FilmsCatalog.Controllers
             return View(producer);
         }
 
+        // GET: Producers/Edit/5
+        [Authorize]
+        public async Task<IActionResult> Edit(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var producer = await this._context.Producers
+                .SingleOrDefaultAsync(m => m.Id == id);
+            if (producer == null)
+            {
+                return NotFound();
+            }
+
+            var model = new Producer
+            {
+                Name = producer.Name,
+                Surname = producer.Surname,
+                Date_of_birth = producer.Date_of_birth,
+                Place_of_birth = producer.Place_of_birth,
+                Genres = producer.Genres,
+                Number_of_films = producer.Number_of_films
+            };
+
+            return this.View(model);
+        }
+
+        // POST: Films/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(Guid? id, ProducerEditViewModel model)
+        {
+            if (id == null)
+            {
+                return this.NotFound();
+            }
+
+            var producer = await this._context.Producers
+                .SingleOrDefaultAsync(m => m.Id == id);
+            if (producer == null)
+            {
+                return this.NotFound();
+            }
+
+            var fileName = Path.GetFileName(ContentDispositionHeaderValue.Parse(model.Photo.ContentDisposition).FileName.Trim('"'));
+            var fileExt = Path.GetExtension(fileName);
+            if (!AllowedExtensions.Contains(fileExt))
+            {
+                ModelState.AddModelError(nameof(model.Photo), "This file type is prohibited");
+            }
+
+            if (this.ModelState.IsValid)
+            {
+                producer.Name = model.Name;
+                producer.Surname = model.Surname;
+                producer.Genres = model.Genres;
+                producer.Date_of_birth = model.Date_of_birth;
+                producer.Place_of_birth = model.Place_of_birth;
+                producer.Number_of_films = model.Number_of_films;
+
+                if (model.Photo != null)
+                {
+                    var photoPath = Path.Combine(hostingEnvironment.WebRootPath, "attachments", producer.Id.ToString("N") + fileExt);
+                    producer.Path = $"/attachments/{producer.Id:N}{fileExt}";
+                    using (var fileStream = new FileStream(photoPath, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read))
+                    {
+                        await model.Photo.CopyToAsync(fileStream);
+                    }
+                }
+
+                await this._context.SaveChangesAsync();
+                return this.RedirectToAction("Index");
+            }
+
+            return this.View(model);
+        }
+
     }
 }
